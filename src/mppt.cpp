@@ -31,13 +31,12 @@ double MPPT::update(double I_new, double V_new){
 
 		if(deriv == ratio) {	// Found the MPP!
 			dX = 0;
-		} else if(deriv > ratio){
+		} else if(deriv > ratio){ // We're to the left of the MPP
 			dX = DX;
-		} else if(deriv < ratio){
+		} else if(deriv < ratio){ // To the right
 			dX = -DX;
 		}
 	}
-
 
 	V = V_new;
 	I = I_new;
