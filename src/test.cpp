@@ -24,9 +24,9 @@ int main(int argc, char* argv[]){
 	q = pow(10,-19)*1.6;
 	kT = pow(10,-23)*293*1.38;
 
-	double V = 1.5;
-	double I = i_curve(V, 0);
-	MPPT tracker(V,I);
+	double V = 0;
+	double I = 0;
+	MPPT tracker(I,V);
 
 	std::ofstream dataFile;
 	dataFile.open(argv[1]);
