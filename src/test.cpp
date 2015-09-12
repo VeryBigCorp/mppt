@@ -24,9 +24,11 @@ int main(int argc, char* argv[]){
 	q = pow(10,-19)*1.6;
 	kT = pow(10,-23)*293*1.38;
 
-	double V = 1.5;
-	double I = i_curve(V, 0);
-	MPPT tracker(V,I);
+	double V = 0;
+	double I = 0;
+	MPPT tracker(I,V);
+
+	tracker.update(I,V+.1);
 
 	std::ofstream dataFile;
 	dataFile.open(argv[1]);
@@ -39,7 +41,7 @@ int main(int argc, char* argv[]){
 	int max = atoi(argv[2])*atoi(argv[3])/1000;
 	for(int i = 0; i <= max; i++){
 		I = i_curve(V, i*scl);
-		V += tracker.update(I,V);
+		V += tracker.update2(I,V);
 		dataFile << i << "\t" << I << "\t" << V << "\t" << I*V << "\n";
 	}
 

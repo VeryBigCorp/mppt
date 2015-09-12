@@ -7,6 +7,6 @@ class MPPT {
 		double I;	// State variables
 		double V;
 		double abs(double a) {
-			a < 0 ? -a : a;
+			return a < 0 ? -a : a;
 		}
 };
