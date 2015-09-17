@@ -1,6 +1,7 @@
+#include <iostream>
 #include "mppt.h"
 
-#define DX 0.01		// Used for static step size
+#define DX 0.01	// Used for static step size
 #define Mmin .5/62
 #define Mmax -3/62
 
@@ -26,8 +27,6 @@ double MPPT::update(double I_new, double V_new){
 	} else {
 		double deriv = dI/dV;
 		double ratio = -I_new/V_new;
-
-		//std::cout << "Derivative: " << deriv << "; Ratio: "<< ratio;
 
 		if(deriv == ratio) {	// Found the MPP!
 			dX = 0;
@@ -104,4 +103,46 @@ double MPPT::update2(double I_new, double V_new) {
 	// }
 
 	// return dX * abs(dP / dV);
+}
+
+// Uses a different way for incremental step size (scale by derivative)
+double MPPT::variableStep(double I_new, double V_new) {
+	double dI = I_new - I;
+	double dV = V_new - V;
+
+	double dP = I_new*V_new - I*V;
+
+	// Do normal incremental conductance
+	double dX = 0;
+
+	if(dV == 0){
+		if(dI == 0){
+			dX = 0;
+		} else if(dI > 0) {
+			dX = DX;
+		} else {
+			dX = -DX;
+		}
+	} else {
+		double deriv = dI/dV;
+		double ratio = -I_new/V_new;
+
+		if(deriv == ratio) {	// Found the MPP!
+			dX = 0;
+		} else if(deriv > ratio){ // We're to the left of the MPP
+			dX = DX;
+		} else if(deriv < ratio){ // To the right
+			dX = -DX;
+		}
+	}
+
+	V = V_new;
+	I = I_new;
+
+	// But with a twist
+	if(dV != 0){
+		return dX * min(1,.005*abs(dP/dV)); // This scales it (like damping, where .005 is the damping factor)
+	} else {
+		return dX;
+	}
 }
